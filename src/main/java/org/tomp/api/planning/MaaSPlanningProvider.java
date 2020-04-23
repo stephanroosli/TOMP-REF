@@ -179,11 +179,13 @@ public class MaaSPlanningProvider implements PlanningProvider {
 		for (int i = 0; i < numberOfLegs; i++) {
 			Segment segment = new Segment();
 			TypeOfAsset typeOfAsset = new TypeOfAsset();
-			if (i % 2 == 0) {
-				typeOfAsset.setAssetClass(AssetClass.BICYCLE);
-			} else {
-				typeOfAsset.setAssetClass(AssetClass.CAR);
+
+			switch (i%3) {
+				case 0: typeOfAsset.setAssetClass(AssetClass.BICYCLE);break;
+				case 1: typeOfAsset.setAssetClass(AssetClass.CAR);break;
+				case 2: typeOfAsset.setAssetClass(AssetClass.TAXI);break;		
 			}
+			
 			segment.setAssetType(typeOfAsset);
 
 			segment.setFrom(from);

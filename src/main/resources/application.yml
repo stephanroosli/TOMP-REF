@@ -67,6 +67,17 @@ tomp:
 
 ---
 spring: 
+   profiles: taxi
+   application:
+      name: taxi-to
+server: 
+   port: 8086
+tomp:
+   maas-id: 8
+   asset-file: src/main/resources/taxi.json
+
+---
+spring: 
    profiles: maasprovider
    application:
       name: maasprovider
@@ -79,5 +90,7 @@ tomp:
        tomp-api-url: http://localhost:8082
      - name: car
        tomp-api-url: http://localhost:8083
+     - name: taxi
+       tomp-api-url: http://localhost:8086
 
    

@@ -9,7 +9,7 @@ import io.swagger.model.LegEvent;
 import io.swagger.model.SimpleLeg;
 
 @Component
-@Profile(value = { "dummy", "bike", "bus", "train", "car" })
+@Profile(value = { "dummy", "bike", "bus", "train", "car", "taxi" })
 public class DummyTripExecutionProvider implements TripExecutionProvider {
 
 	@Autowired

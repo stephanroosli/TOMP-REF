@@ -13,7 +13,7 @@ import io.swagger.model.BookingOption;
 import io.swagger.model.BookingState;
 
 @Component
-@Profile(value = { "dummy", "bike", "bus", "train", "car" })
+@Profile(value = { "dummy", "bike", "bus", "train", "car", "taxi" })
 public class GenericBookingProvider implements BookingProvider {
 
 	@Autowired
