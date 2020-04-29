@@ -66,8 +66,8 @@ public abstract class BasePlanningProvider implements PlanningProvider {
 		result.setLeg(getLeg());
 		result.setPricing(getFare());
 		if (provideIds) {
-			System.out.println(
-					"We have to take a closer look. Can we more or less guarantee that we can fulfill this request?");
+			System.out.println(result.getTypeOfAsset().getAssetClass().toString() + ": " +
+					"provideId=true -> Check if a reservation can be made to fulfill this request?");
 			result.setId(UUID.randomUUID().toString());
 		}
 		arrayList.add(result);
