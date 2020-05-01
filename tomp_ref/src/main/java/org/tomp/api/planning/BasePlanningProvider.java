@@ -1,0 +1,106 @@
+package org.tomp.api.planning;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.tomp.api.configuration.ExternalConfiguration;
+import org.tomp.api.mp.ObjectFromFileProvider;
+import org.tomp.api.repository.DummyRepository;
+
+import io.swagger.model.Condition;
+import io.swagger.model.Coordinates;
+import io.swagger.model.Fare;
+import io.swagger.model.OptionsLeg;
+import io.swagger.model.PlanningCheck;
+import io.swagger.model.PlanningOptions;
+import io.swagger.model.PlanningResult;
+import io.swagger.model.SimpleLeg;
+import io.swagger.model.TypeOfAsset;
+
+@Component
+public abstract class BasePlanningProvider implements PlanningProvider {
+
+	private static final Logger log = LoggerFactory.getLogger(BasePlanningProvider.class);
+
+	@NotNull
+	@Valid
+	protected Coordinates from;
+	protected @Valid Coordinates to;
+	protected @Valid BigDecimal start;
+	protected @Valid BigDecimal end;
+
+	@Autowired
+	private DummyRepository repository;
+
+	@Autowired
+	ExternalConfiguration configuration;
+
+	public PlanningOptions getOptions(@Valid PlanningCheck body, String acceptLanguage) {
+		log.info("Request for options");
+		boolean provideIds = body.isProvideIds() != null && body.isProvideIds().booleanValue();
+
+		PlanningOptions options = new PlanningOptions();
+		options.setConditions(getConditions(acceptLanguage));
+		from = body.getFrom();
+		to = body.getTo();
+		start = body.getStartTime();
+		end = body.getEndTime();
+		options.setResults(getResults(body));
+
+		if (provideIds) {
+			repository.saveOptions(options);
+		} else {
+			log.info("Forget this one");
+		}
+		return options;
+	}
+
+	protected List<Condition> getConditions(String acceptLanguage) {
+		ObjectFromFileProvider<Condition[]> conditionFileProvider = new ObjectFromFileProvider<>();
+		Condition[] conditions = conditionFileProvider.getObject(acceptLanguage, Condition[].class,
+				configuration.getConditionFile());
+		List<Condition> conditionList = new ArrayList<>();
+		for (Condition c : conditions) {
+			conditionList.add(c);
+		}
+		return conditionList;
+	}
+
+	protected ArrayList<PlanningResult> getResults(@Valid PlanningCheck body) {
+		boolean provideIds = body.isProvideIds() != null && body.isProvideIds().booleanValue();
+
+		ArrayList<PlanningResult> arrayList = new ArrayList<>();
+		SimpleLeg result = new SimpleLeg();
+		result.setTypeOfAsset(getAssetType());
+		result.setLeg(getLeg());
+		result.setPricing(getFare());
+		if (provideIds) {
+<<<<<<< HEAD:src/main/java/org/tomp/api/planning/BasePlanningProvider.java
+			System.out.println(result.getTypeOfAsset().getAssetClass().toString() + ": " +
+					"provideId=true -> Check if a reservation can be made to fulfill this request?");
+=======
+			log.info("We have to take a closer look. Can we more or less guarantee that we can fulfill this request?");
+>>>>>>> e26f319cb5ccd026e53dd0015f7b540618362083:tomp_ref/src/main/java/org/tomp/api/planning/BasePlanningProvider.java
+			result.setId(UUID.randomUUID().toString());
+		}
+		arrayList.add(result);
+
+		return arrayList;
+	}
+
+	protected abstract Fare getFare();
+
+	protected abstract OptionsLeg getLeg();
+
+	protected abstract TypeOfAsset getAssetType();
+
+}

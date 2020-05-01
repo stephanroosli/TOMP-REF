@@ -1,0 +1,18 @@
+{"startTime":1546336800,"endTime":1546337000,
+    "from": {
+		"lng": 8.008,
+		"lat": 47.988
+	},
+	"radius": 1000,
+	"to": {
+		"lng": 7.8919999999999995,
+		"lat": 47.872
+	},
+	"travellers": 1,
+	"provideIds": false,
+	"users": [
+		{
+			"age": 44
+		}
+	]
+}

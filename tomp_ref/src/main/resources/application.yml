@@ -1,0 +1,106 @@
+spring:
+   application:
+      name: tomp-ref
+server:
+   port: 8080
+tomp:
+   lookup-service: http://localhost:7999/
+   accept-language: nl
+   api-version: 0.4.0
+   asset-class: org.tomp.api.operatorinformation.assets.AssetsFromFileProvider
+   asset-file: src/main/resources/assets.json
+   system-information-file: src/main/resources/system-info-generic.json
+   condition-file: src/main/resources/conditions.json
+   regions-file: src/main/resources/regions.json
+   stations-file: src/main/resources/stations.json
+   external-url: http://localhost:8080/
+logging:
+  level:
+    org.springframework: ERROR
+    
+---
+spring: 
+   profiles: bike
+   application:
+      name: bike-to
+server: 
+   port: 8082
+tomp:
+   maas-id: da612986-3408-4c91-adf9-8dbbc16ff4f9
+   asset-file: src/main/resources/bikes.json
+   regions-file: src/main/resources/regions.json
+   
+---
+spring: 
+   profiles: bus
+   application:
+      name: bus-to
+server: 
+   port: 8086
+tomp:
+   maas-id: d0d326a2-007c-4967-ba05-18f4c6bf294b
+
+---
+spring: 
+   profiles: car
+   application:
+      name: car-to
+server: 
+   port: 8083
+tomp:
+   maas-id: aac7f6ae-1d0d-44cd-9da5-ca62d48eb48d
+   asset-file: src/main/resources/cars.json
+
+---
+spring: 
+   profiles: train
+   application:
+      name: train-to
+server: 
+   port: 8084
+tomp:
+   maas-id: 1b5f697f-47a2-41dc-95c1-d3443f70039c
+ 
+---
+spring: 
+   profiles: scooter
+   application:
+      name: scooter-to
+server: 
+   port: 8085
+tomp:
+   maas-id: 1f269bc0-31fa-4dba-9f16-21c419eacf35
+
+---
+spring: 
+   profiles: taxi
+   application:
+      name: taxi-to
+server: 
+   port: 8086
+tomp:
+   maas-id: 8
+   asset-file: src/main/resources/taxi.json
+
+---
+spring: 
+   profiles: maasprovider
+   application:
+      name: maasprovider
+server: 
+   port: 8090
+tomp:
+<<<<<<< HEAD:src/main/resources/application.yml
+   maas-id: 1   
+   transport-operators:
+     - name: bike
+       tomp-api-url: http://localhost:8082
+     - name: car
+       tomp-api-url: http://localhost:8083
+     - name: taxi
+       tomp-api-url: http://localhost:8086
+
+   
+=======
+   maas-id: 196aa22d-d05f-4ec9-9d65-a325516196bb
+>>>>>>> e26f319cb5ccd026e53dd0015f7b540618362083:tomp_ref/src/main/resources/application.yml
