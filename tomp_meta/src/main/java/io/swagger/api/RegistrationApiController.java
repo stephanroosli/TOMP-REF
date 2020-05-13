@@ -16,6 +16,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Polygon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,7 @@ import io.swagger.client.ApiException;
 import io.swagger.client.ApiResponse;
 import io.swagger.client.Pair;
 import io.swagger.client.ProgressRequestBody.ProgressRequestListener;
+import io.swagger.configuration.MetaLookUpConfiguration;
 import io.swagger.configuration.ObjectFromFileProvider;
 import io.swagger.configuration.Registry;
 import io.swagger.model.Body;
@@ -50,6 +52,9 @@ public class RegistrationApiController implements RegistrationApi {
 	private Registry repository;
 
 	private GeometryFactory factory = new GeometryFactory();
+
+	@Autowired
+	MetaLookUpConfiguration configuration;
 
 	@org.springframework.beans.factory.annotation.Autowired
 	public RegistrationApiController(HttpServletRequest request, Registry repository) {
@@ -89,7 +94,6 @@ public class RegistrationApiController implements RegistrationApi {
 				url = url.substring(0, url.length() - 1);
 			}
 			client.setBasePath(url);
-			List<Pair> queryParams = new ArrayList<>();
 			List<Pair> collectionQueryParams = new ArrayList<>();
 			Map<String, String> headerParams = new HashMap<>();
 			Map<String, Object> formParams = new HashMap<>();
@@ -109,8 +113,8 @@ public class RegistrationApiController implements RegistrationApi {
 
 			try {
 				Object responsebody = null;
-				Call call = client.buildCall("/operator/regions/", "GET", queryParams, collectionQueryParams,
-						responsebody, headerParams, formParams, authNames, progressRequestListener);
+				Call call = client.buildCall("/operator/regions/", "GET", collectionQueryParams, responsebody,
+						headerParams, formParams, authNames, progressRequestListener);
 
 				ApiResponse<SystemRegion[]> response = client.execute(call, SystemRegion[].class);
 
@@ -172,7 +176,6 @@ public class RegistrationApiController implements RegistrationApi {
 		int port = request.getRemotePort();
 		ApiClient client = new ApiClient();
 		String url = host + ":" + port + "/" + registrationresult;
-		List<Pair> queryParams = new ArrayList<>();
 		List<Pair> collectionQueryParams = new ArrayList<>();
 		Map<String, String> headerParams = new HashMap<>();
 		Map<String, Object> formParams = new HashMap<>();
@@ -183,9 +186,8 @@ public class RegistrationApiController implements RegistrationApi {
 
 		ProgressRequestListener progressRequestListener = null;
 		try {
-			Call call = client.buildCall(url, "POST", queryParams, collectionQueryParams, responsebody, headerParams,
-					formParams, authNames, progressRequestListener);
-
+			Call call = client.buildCall(url, "POST", collectionQueryParams, responsebody, headerParams, formParams,
+					authNames, progressRequestListener);
 			client.execute(call);
 		} catch (ApiException e) {
 			e.printStackTrace();
@@ -195,15 +197,17 @@ public class RegistrationApiController implements RegistrationApi {
 	@PostConstruct
 	public void populateFromFile() {
 		ObjectFromFileProvider<MaasOperator[]> operatorProvider = new ObjectFromFileProvider<>();
-		for (MaasOperator operator : operatorProvider.getObject(MaasOperator[].class, "operators.json")) {
-			repository.register(operator);
+		String file = configuration.getOperatorFile();
+		if (file != null) {
+			for (MaasOperator operator : operatorProvider.getObject(MaasOperator[].class, file)) {
+				repository.register(operator);
 
-			try {
-				fetchArea(operator);
-			} catch (Exception e) {
-				log.error(e.getMessage());
+				try {
+					fetchArea(operator);
+				} catch (Exception e) {
+					log.error(e.getMessage());
+				}
 			}
 		}
 	}
-
 }
